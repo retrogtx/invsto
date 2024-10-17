@@ -42,7 +42,8 @@ input[type="range"]::-webkit-slider-thumb {
   appearance: none;
   width: 40px;
   height: 40px;
-  background: #10D5C2 url('/images/icon-slider.svg') center no-repeat;
+  background: #10D5C2 url('/icon-slider.svg') center no-repeat;
+  background-size: 50%;
   cursor: pointer;
   border-radius: 50%;
   box-shadow: 0 15px 30px rgba(0, 255, 231, 0.6);
@@ -53,7 +54,8 @@ input[type="range"]::-webkit-slider-thumb {
 input[type="range"]::-moz-range-thumb {
   width: 40px;
   height: 40px;
-  background: #10D5C2 url('/images/icon-slider.svg') center no-repeat;
+  background: #10D5C2 url('/icon-slider.svg') center no-repeat;
+  background-size: 50%;
   cursor: pointer;
   border-radius: 50%;
   box-shadow: 0 15px 30px rgba(0, 255, 231, 0.6);

@@ -51,8 +51,8 @@ export default function PricingComponent() {
         max="4"
         value={sliderValue}
         onChange={(e) => dispatch(setSliderValue(Number(e.target.value)))}
-        className="w-full mb-8"
-        style={{ '--range-progress': '50%' } as React.CSSProperties}
+        className="w-full mb-8 appearance-none bg-transparent"
+        style={{ '--range-progress': `${(sliderValue / 4) * 100}%` } as React.CSSProperties}
       />
       
       <div className="flex items-center justify-end mb-8">

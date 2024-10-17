@@ -1,6 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../store/store';
+import { setSliderValue, toggleBillingCycle } from '../store/pricingSlice';
 
 const pageViewsOptions = [
   { views: '10K', price: 8 },
@@ -11,11 +14,24 @@ const pageViewsOptions = [
 ];
 
 export default function PricingComponent() {
-  const [sliderValue, setSliderValue] = useState(2);
-  const [isYearly, setIsYearly] = useState(false);
+  const dispatch = useDispatch();
+  const { sliderValue, isYearly } = useSelector((state: RootState) => state.pricing);
 
   const currentOption = pageViewsOptions[sliderValue];
   const price = isYearly ? currentOption.price * 0.75 : currentOption.price;
+
+  const rangeRef = useRef<HTMLInputElement>(null);
+
+  const updateSliderProgress = useCallback(() => {
+    if (rangeRef.current) {
+      const progress = (sliderValue / 4) * 100;
+      rangeRef.current.style.setProperty('--range-progress', `${progress}%`);
+    }
+  }, [sliderValue]);
+
+  useEffect(() => {
+    updateSliderProgress();
+  }, [updateSliderProgress]);
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-8">
@@ -29,12 +45,14 @@ export default function PricingComponent() {
       </div>
       
       <input
+        ref={rangeRef}
         type="range"
         min="0"
         max="4"
         value={sliderValue}
-        onChange={(e) => setSliderValue(Number(e.target.value))}
+        onChange={(e) => dispatch(setSliderValue(Number(e.target.value)))}
         className="w-full mb-8"
+        style={{ '--range-progress': '50%' } as React.CSSProperties}
       />
       
       <div className="flex items-center justify-end mb-8">
@@ -43,7 +61,7 @@ export default function PricingComponent() {
           <input
             type="checkbox"
             checked={isYearly}
-            onChange={() => setIsYearly(!isYearly)}
+            onChange={() => dispatch(toggleBillingCycle())}
           />
           <span className="slider round"></span>
         </label>

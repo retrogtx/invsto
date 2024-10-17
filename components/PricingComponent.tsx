@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
 import { setSliderValue, toggleBillingCycle } from '../store/pricingSlice';
@@ -21,6 +21,18 @@ export default function PricingComponent() {
   const price = isYearly ? currentOption.price * 0.75 : currentOption.price;
 
   const rangeRef = useRef<HTMLInputElement>(null);
+
+  const [isSliderActive, setIsSliderActive] = useState(false);
+
+  const handleSliderMouseDown = () => setIsSliderActive(true);
+  const handleSliderMouseUp = () => setIsSliderActive(false);
+
+  useEffect(() => {
+    document.addEventListener('mouseup', handleSliderMouseUp);
+    return () => {
+      document.removeEventListener('mouseup', handleSliderMouseUp);
+    };
+  }, []);
 
   const updateSliderProgress = useCallback(() => {
     if (rangeRef.current) {
@@ -51,19 +63,26 @@ export default function PricingComponent() {
         max="4"
         value={sliderValue}
         onChange={(e) => dispatch(setSliderValue(Number(e.target.value)))}
-        className="w-full mb-8 appearance-none bg-transparent"
+        onMouseDown={handleSliderMouseDown}
+        onMouseUp={handleSliderMouseUp}
+        className={`w-full mb-8 appearance-none bg-transparent ${isSliderActive ? 'active' : ''}`}
         style={{ '--range-progress': `${(sliderValue / 4) * 100}%` } as React.CSSProperties}
       />
       
       <div className="flex items-center justify-center ml-6 mb-8 text-xs md:text-sm">
         <span className="text-[#858FAD] mr-2">Monthly Billing</span>
-        <label className="switch mx-2">
+        <label className="switch mx-2 relative inline-block w-[44px] h-[22px]">
           <input
             type="checkbox"
             checked={isYearly}
             onChange={() => dispatch(toggleBillingCycle())}
+            className="opacity-0 w-0 h-0"
           />
-          <span className="slider round"></span>
+          <span className={`slider round absolute cursor-pointer top-0 left-0 right-0 bottom-0 transition-all duration-300 before:absolute before:content-[''] before:h-[18px] before:w-[18px] before:top-[2px] before:left-[2px] before:bg-white before:transition-all before:duration-300 ${
+            isYearly
+              ? "bg-[#10D5C2] before:translate-x-[22px]"
+              : "bg-[#CFD8EF] before:translate-x-0"
+          }`}></span>
         </label>
         <span className="text-[#858FAD] mr-2">Yearly Billing</span>
         <span className="bg-[#FEECE7] text-[#FF8C66] font-bold px-2 py-1 rounded-full">
